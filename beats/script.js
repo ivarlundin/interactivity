@@ -1,7 +1,7 @@
 let audioCtx, analyser;
 let visualiser = null;
 // Set up the interval meter.
-// 5: number of samples to measure over
+// 5: number of samples to measure over r
 // 200: millisecond expected length of pulse (to avoid counting several times for same sound)
 //      setting this too high will mean that legit pulses will be ignored
 let intervalMeter = new IntervalMeter(5, 200);
