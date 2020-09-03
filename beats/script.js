@@ -38,23 +38,23 @@ function onMicSuccess(stream) {
 
   // fftSize must be a power of 2. Higher values slower, more detailed
   // Range is 32-32768
-  analyser.fftSize = 1024;
+  analyser.fftSize = 512;
 
   // smoothingTimeConstant ranges from 0.0 to 1.0
   // 0 = no averaging. Fast response, jittery
   // 1 = maximum averaging. Slow response, smooth
-  analyser.smoothingTimeConstant = 0.5;
+  analyser.smoothingTimeConstant = 0.8;
 
   // Low and high shelf filters. Gain is set to 0 so they have no effect
   // could be useful for excluding background noise.
   const lowcut = audioCtx.createBiquadFilter();
   lowcut.type = "lowshelf";
-  lowcut.frequency.value = 3000;
+  lowcut.frequency.value = 500;
   lowcut.gain.value = 0;
 
   const highcut = audioCtx.createBiquadFilter();
   highcut.type = "highshelf";
-  highcut.frequency.value = 10000;
+  highcut.frequency.value = 1500;
   highcut.gain.value = 0;
 
   // Microphone -> filters -> analyser
@@ -78,11 +78,16 @@ function analyse() {
 
   // In testing, with FFT size of 32, bucket #19 correspnds with metronome
   // ...but probably not your sound.
-  const magicBucket = 18;
+  const magicBucket = 13;
+  const middleBucket = 20;
+  const otherBucket = 26;
 
   // Determine pulse if frequency threshold is exceeded.
   // -60 was determined empirically, you'll need to find your own threshold
   let hit = (freq[magicBucket] > -60);
+  let middleHit = (freq[middleBucket] > -60);
+  let otherHit = (freq[otherBucket] > -60);
+
 
   // An alternative approach is to check for a peak, regardless of freq
   // let hit = thresholdPeak(wave, 0.004);
@@ -95,6 +100,7 @@ function analyse() {
     // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
     let pulsed = intervalMeter.pulse();
 
+
     if (pulsed) {
       // Debug
       // let avgMs = intervalMeter.calculate();
@@ -103,10 +109,67 @@ function analyse() {
       //   '\tms: ' + avgMs +
       //   '\tbpm: ' + avgBpm);
       document.getElementById('hit').classList.add('hit');
+      console.log("LOW")
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
   }
+
+  if (otherHit) {
+    // Use the IntevalMeter (provided by util.js)
+    // to track the time between pulses.
+
+    // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
+    let pulsed = intervalMeter.pulse();
+
+
+    if (pulsed) {
+      // Debug
+      // let avgMs = intervalMeter.calculate();
+      // let avgBpm = 1.0 / (avgMs / 1000.0) * 60.0;
+      // console.log('level: ' + freq[magicBucket] +
+      //   '\tms: ' + avgMs +
+      //   '\tbpm: ' + avgBpm);
+      document.getElementById('hit').classList.add('hit');
+      console.log("HIGH")
+    }
+  } else {
+    document.getElementById('hit').classList.remove('hit');
+  }
+
+
+  if (middleHit) {
+    // Use the IntevalMeter (provided by util.js)
+    // to track the time between pulses.
+
+    // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
+    let pulsed = intervalMeter.pulse();
+
+
+    if (pulsed) {
+      // Debug
+      // let avgMs = intervalMeter.calculate();
+      // let avgBpm = 1.0 / (avgMs / 1000.0) * 60.0;
+      // console.log('level: ' + freq[magicBucket] +
+      //   '\tms: ' + avgMs +
+      //   '\tbpm: ' + avgBpm);
+      document.getElementById('hit').classList.add('hit');
+      console.log("MIDDLE")
+    }
+  } else {
+    document.getElementById('hit').classList.remove('hit');
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   // Optional rendering of data
   visualiser.renderWave(wave, true);
