@@ -12,6 +12,12 @@ if (document.readyState != 'loading') {
   document.addEventListener('DOMContentLoaded', onDocumentReady);
 }
 
+
+
+
+const trimGain = -35;
+
+
 // Main initialisation, called when document is loaded and ready.
 function onDocumentReady() {
   visualiser = new Visualiser(document.getElementById('visualiser'));
@@ -84,9 +90,9 @@ function analyse() {
 
   // Determine pulse if frequency threshold is exceeded.
   // -60 was determined empirically, you'll need to find your own threshold
-  let hit = (freq[magicBucket] > -60);
-  let middleHit = (freq[middleBucket] > -60);
-  let otherHit = (freq[otherBucket] > -60);
+  let hit = (freq[magicBucket] > trimGain);
+  let middleHit = (freq[middleBucket] > trimGain);
+  let otherHit = (freq[otherBucket] > trimGain);
 
 
   // An alternative approach is to check for a peak, regardless of freq
@@ -166,19 +172,8 @@ function analyse() {
     document.getElementById("middle").style.opacity = "0.1";
   }
 
-
-
-
-
-
-
-
-
-
-
-
   // Optional rendering of data
-  visualiser.renderWave(wave, true);
+  //visualiser.renderWave(wave, true);
   visualiser.renderFreq(freq);
 
   // Run again
@@ -263,3 +258,4 @@ function sampleData(lowFreq, highFreq, freqData) {
   const samples = freqData.slice(lowIndex, highIndex);
   return samples;
 }
+
