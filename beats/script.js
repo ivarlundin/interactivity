@@ -110,9 +110,11 @@ function analyse() {
       //   '\tbpm: ' + avgBpm);
       document.getElementById('hit').classList.add('hit');
       console.log("LOW")
+      document.getElementById("low").style.opacity = "1";
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
+    document.getElementById("low").style.opacity = "0.1";
   }
 
   if (otherHit) {
@@ -132,9 +134,11 @@ function analyse() {
       //   '\tbpm: ' + avgBpm);
       document.getElementById('hit').classList.add('hit');
       console.log("HIGH")
+      document.getElementById("high").style.opacity = "1";
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
+    document.getElementById("high").style.opacity = "0.1";
   }
 
 
@@ -155,9 +159,11 @@ function analyse() {
       //   '\tbpm: ' + avgBpm);
       document.getElementById('hit').classList.add('hit');
       console.log("MIDDLE")
+      document.getElementById("middle").style.opacity = "1";
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
+    document.getElementById("middle").style.opacity = "0.1";
   }
 
 

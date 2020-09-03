@@ -10,9 +10,10 @@ html, body {
   box-sizing: inherit;
 }
 
+
 body {
   padding: 2em;
-  transition: background-color ease-in-out 0.3s;
+  background-color: white !important;
 }
 
 .hit {
@@ -23,4 +24,29 @@ body {
   padding: 1em;
   border: 1px solid dimgray;
   display: inline-block;
+}
+
+
+.tuner {
+  width: 100px;
+  height: 300px;
+}
+
+.box {
+  width: 100px;
+  height: 100px;
+}
+#high {
+  background-color: green;
+  opacity: 0.1;
+
+}
+#middle {
+  background-color: yellow;
+  opacity: 0.1;
+
+}
+#low {
+  background-color: red;
+  opacity: 0.1;
 }
