@@ -21,6 +21,12 @@ const trimGain = -35;
 let shrinkSpeed = 5;
 let fillSpeed = 5;
 
+let orgSize = 50;
+let ballon = { 
+  x: 0, 
+  y: 0, 
+  size: orgSize
+};
 
 
 
@@ -99,7 +105,7 @@ function analyse() {
   // In testing, with FFT size of 32, bucket #19 correspnds with metronome
   // ...but probably not your sound.
   const magicBucket = 13;
-  const middleBucket = 20;
+  const middleBucket = 100;
   const otherBucket = 26;
 
   // Determine pulse if frequency threshold is exceeded.
@@ -134,7 +140,7 @@ function analyse() {
 
       //Shrink balloon
       ballon.size -= shrinkSpeed;
-      drawCanvas();
+      //drawCanvas();
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
@@ -162,7 +168,7 @@ function analyse() {
 
       //Fill balloon
       ballon.size += fillSpeed;
-      drawCanvas();
+      //drawCanvas();
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
@@ -222,6 +228,14 @@ function updateDisplay() {
   // Update text readout
   document.getElementById('intervalMs').innerText = parseInt(currentIntervalMs) + ' ms.';
   document.getElementById('intervalBpm').innerText = currentBpm + ' bpm.';
+
+  if (currentBpm == 0) {
+    //Nothing
+  } else if (currentBpm < 120) {
+    ballon.x += 2
+  } else {
+    ballon.x -= 2
+  }
 
   // Set colour
   document.body.style.backgroundColor = 'hsl(' + h + ', 100%, ' + l + '%)';
@@ -289,13 +303,6 @@ function sampleData(lowFreq, highFreq, freqData) {
 let canvas = document.getElementById('ballons');
 let ctx = canvas.getContext('2d');
 
-
-let ballon = { 
-  x: 0, 
-  y: 0, 
-  size: 100
-};
-
 function centerBallon() {
   let os = ballon.size;
 
@@ -317,3 +324,21 @@ function drawCanvas() {
 
 centerBallon();
 
+
+
+function animate() {
+  requestAnimationFrame(animate);
+  drawCanvas();
+}
+
+animate();
+
+
+function popBalloon() {
+  ballon.size = 0;
+
+  setTimeout(function() {
+    ballon.size = orgSize;
+    centerBallon();
+  }, 1000);
+};
