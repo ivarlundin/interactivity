@@ -50,3 +50,6 @@ body {
   background-color: red;
   opacity: 0.1;
 }
+#ballons {
+  border: 2px solid black;
+}

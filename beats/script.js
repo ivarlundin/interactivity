@@ -14,8 +14,20 @@ if (document.readyState != 'loading') {
 
 
 
-
 const trimGain = -35;
+
+
+//speed for balloon
+let shrinkSpeed = 5;
+let fillSpeed = 5;
+
+
+
+
+
+
+
+
 
 
 // Main initialisation, called when document is loaded and ready.
@@ -45,6 +57,8 @@ function onMicSuccess(stream) {
   // fftSize must be a power of 2. Higher values slower, more detailed
   // Range is 32-32768
   analyser.fftSize = 512;
+
+      //128?
 
   // smoothingTimeConstant ranges from 0.0 to 1.0
   // 0 = no averaging. Fast response, jittery
@@ -117,6 +131,10 @@ function analyse() {
       document.getElementById('hit').classList.add('hit');
       console.log("LOW")
       document.getElementById("low").style.opacity = "1";
+
+      //Shrink balloon
+      ballon.size -= shrinkSpeed;
+      drawCanvas();
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
@@ -141,10 +159,15 @@ function analyse() {
       document.getElementById('hit').classList.add('hit');
       console.log("HIGH")
       document.getElementById("high").style.opacity = "1";
+
+      //Fill balloon
+      ballon.size += fillSpeed;
+      drawCanvas();
     }
   } else {
     document.getElementById('hit').classList.remove('hit');
     document.getElementById("high").style.opacity = "0.1";
+
   }
 
 
@@ -258,4 +281,39 @@ function sampleData(lowFreq, highFreq, freqData) {
   const samples = freqData.slice(lowIndex, highIndex);
   return samples;
 }
+
+
+
+
+//CANVAS
+let canvas = document.getElementById('ballons');
+let ctx = canvas.getContext('2d');
+
+
+let ballon = { 
+  x: 0, 
+  y: 0, 
+  size: 100
+};
+
+function centerBallon() {
+  let os = ballon.size;
+
+  let wt = canvas.width;
+  let ht = canvas.height;
+  ballon.x = wt/2;
+  ballon.y = ht/2;
+
+  drawCanvas();
+}
+
+function drawCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
+  ctx.fillStyle = "rgb(255, 0, 0)";
+  ctx.fill();
+}
+
+centerBallon();
 
