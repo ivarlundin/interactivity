@@ -86,131 +86,6 @@ function onMicSuccess(stream) {
   window.requestAnimationFrame(analyse);
 }
 
-
-
-
-/*
-
-function analyse() {
-  const bins = analyser.frequencyBinCount;
-
-  // Get frequency and amplitude data
-  const freq = new Float32Array(bins);
-  const wave = new Float32Array(bins);
-  analyser.getFloatFrequencyData(freq);
-  analyser.getFloatTimeDomainData(wave);
-
-  // In testing, with FFT size of 32, bucket #19 correspnds with metronome
-  // ...but probably not your sound.
-  const magicBucket = 3;
-  const middleBucket = 100;
-  const otherBucket = 7;
-
-  // Determine pulse if frequency threshold is exceeded.
-  // -60 was determined empirically, you'll need to find your own threshold
-  let hit = (freq[magicBucket] > trimGain);
-  let middleHit = (freq[middleBucket] > trimGain);
-  let otherHit = (freq[otherBucket] > trimGain);
-
-
-  // An alternative approach is to check for a peak, regardless of freq
-  // let hit = thresholdPeak(wave, 0.004);
-
-
-  if (hit) {
-    // Use the IntevalMeter (provided by util.js)
-    // to track the time between pulses.
-
-    // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
-    let pulsed = intervalMeter.pulse();
-
-
-    if (pulsed) {
-      // Debug
-      // let avgMs = intervalMeter.calculate();
-      // let avgBpm = 1.0 / (avgMs / 1000.0) * 60.0;
-      // console.log('level: ' + freq[magicBucket] +
-      //   '\tms: ' + avgMs +
-      //   '\tbpm: ' + avgBpm);
-      document.getElementById('hit').classList.add('hit');
-      document.getElementById("low").style.opacity = "1";
-
-      //Shrink balloon
-      ballon.size -= shrinkSpeed;
-      //drawCanvas();
-    }
-  } else {
-    document.getElementById('hit').classList.remove('hit');
-    document.getElementById("low").style.opacity = "0.1";
-  }
-
-  if (otherHit) {
-    // Use the IntevalMeter (provided by util.js)
-    // to track the time between pulses.
-
-    // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
-    let pulsed = intervalMeter.pulse();
-
-
-    if (pulsed) {
-      // Debug
-      // let avgMs = intervalMeter.calculate();
-      // let avgBpm = 1.0 / (avgMs / 1000.0) * 60.0;
-      // console.log('level: ' + freq[magicBucket] +
-      //   '\tms: ' + avgMs +
-      //   '\tbpm: ' + avgBpm);
-      document.getElementById('hit').classList.add('hit');
-      document.getElementById("high").style.opacity = "1";
-
-      //Fill balloon
-      ballon.size += fillSpeed;
-      //drawCanvas();
-    }
-  } else {
-    document.getElementById('hit').classList.remove('hit');
-    document.getElementById("high").style.opacity = "0.1";
-
-  }
-
-
-  if (middleHit) {
-    // Use the IntevalMeter (provided by util.js)
-    // to track the time between pulses.
-
-    // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
-    let pulsed = intervalMeter.pulse();
-
-
-    if (pulsed) {
-      // Debug
-      // let avgMs = intervalMeter.calculate();
-      // let avgBpm = 1.0 / (avgMs / 1000.0) * 60.0;
-      // console.log('level: ' + freq[magicBucket] +
-      //   '\tms: ' + avgMs +
-      //   '\tbpm: ' + avgBpm);
-      document.getElementById('hit').classList.add('hit');
-      console.log("MIDDLE")
-      document.getElementById("middle").style.opacity = "1";
-    }
-  } else {
-    document.getElementById('hit').classList.remove('hit');
-    document.getElementById("middle").style.opacity = "0.1";
-  }
-
-  // Optional rendering of data
-  //visualiser.renderWave(wave, true);
-  visualiser.renderFreq(freq);
-
-  // Run again
-  window.requestAnimationFrame(analyse);
-}
-*/
-
-
-
-
-
-
 // Sets background colour and prints out interval info
 function updateDisplay() {
   // Calculate interval and derive BPM (if interval is above 0)
@@ -230,7 +105,6 @@ function updateDisplay() {
   // Update text readout
   document.getElementById('intervalMs').innerText = parseInt(currentIntervalMs) + ' ms.';
   document.getElementById('intervalBpm').innerText = currentBpm + ' bpm.';
-
 
 
 //Beat triggering
@@ -380,20 +254,24 @@ let analysisArray = [
       console.log('low');
 
       //Shrink balloon here
-      ballon.size -= fillSpeed;
+      if (ballon.size <= 1) {
+        ballon.size = 1;
+      } else {
+        ballon.size -= fillSpeed;
+      }
     }
   },
   {
-    freq: 4,
+    freq: 9,
     action: function() {
-      console.log('middle');
+      console.log('pop');
       
       //Shrink balloon here
       popBalloon();
     }
   },
   {
-    freq: 9,
+    freq: 5,
     action: function() {
       console.log('high');
 
@@ -425,26 +303,18 @@ function analyse() {
     // let hit = thresholdPeak(wave, 0.004);
 
     if (hit) {
-      // Use the IntevalMeter (provided by util.js)
-      // to track the time between pulses.
-
-      // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
       let pulsed = intervalMeter.pulse();
 
       if (pulsed) {
-        // Debug
-        // let avgMs = intervalMeter.calculate();
-        // let avgBpm = 1.0 / (avgMs / 1000.0) * 60.0;
-        // console.log('level: ' + freq[magicBucket] +
-        //   '\tms: ' + avgMs +
-        //   '\tbpm: ' + avgBpm);
-        document.getElementById('hit').classList.add('hit');
-        document.getElementById("low").style.opacity = "1";
+      
+        //document.getElementById('hit').classList.add('hit');
+        //document.getElementById("low").style.opacity = "1";
 
         analysisArray[i].action();
+        
       } else {
-        document.getElementById('hit').classList.remove('hit');
-        document.getElementById("low").style.opacity = "0.1";
+        //document.getElementById('hit').classList.remove('hit');
+        //document.getElementById("low").style.opacity = "0.1";
       
       }
     }
