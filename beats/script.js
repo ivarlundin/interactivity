@@ -29,13 +29,6 @@ let ballon = { 
 };
 
 
-
-
-
-
-
-
-
 // Main initialisation, called when document is loaded and ready.
 function onDocumentReady() {
   visualiser = new Visualiser(document.getElementById('visualiser'));
@@ -92,6 +85,11 @@ function onMicSuccess(stream) {
   // Start loop
   window.requestAnimationFrame(analyse);
 }
+
+
+
+
+/*
 
 function analyse() {
   const bins = analyser.frequencyBinCount;
@@ -206,6 +204,12 @@ function analyse() {
   // Run again
   window.requestAnimationFrame(analyse);
 }
+*/
+
+
+
+
+
 
 // Sets background colour and prints out interval info
 function updateDisplay() {
@@ -229,31 +233,7 @@ function updateDisplay() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//MOVING TYME
+//Beat triggering
 
 let divide = 25;
 let moveBeat = Math.floor(currentBpm/divide);
@@ -265,17 +245,6 @@ let moveBeat = Math.floor(currentBpm/divide);
     console.log(currentBpm);
   
   }
-
-
-
-
-
-
-
-
-
-
-
 
   /*
   else if (currentBpm < 50) {
@@ -346,6 +315,12 @@ function sampleData(lowFreq, highFreq, freqData) {
 
 
 
+
+
+
+
+
+
 //CANVAS
 let canvas = document.getElementById('ballons');
 let ctx = canvas.getContext('2d');
@@ -393,4 +368,94 @@ function popBalloon() {
 function turnOffSize() {
   shrinkSpeed = 0;
   fillSpeed = 0;
+};
+
+
+
+//Here we assign bucket and an action for that
+let analysisArray = [
+  {
+    freq: 2,
+    action: function() {
+      console.log('low');
+
+      //Shrink balloon here
+      ballon.size -= fillSpeed;
+    }
+  },
+  {
+    freq: 4,
+    action: function() {
+      console.log('middle');
+      
+      //Shrink balloon here
+      popBalloon();
+    }
+  },
+  {
+    freq: 9,
+    action: function() {
+      console.log('high');
+
+      //Shrink balloon here
+      ballon.size += fillSpeed;
+    }
+  },
+
+function doThis() {
+  console.log("hellllllooo");
+}
+
+function analyse() {
+  const bins = analyser.frequencyBinCount;
+
+  // Get frequency and amplitude data
+  const freq = new Float32Array(bins);
+  const wave = new Float32Array(bins);
+  analyser.getFloatFrequencyData(freq);
+  analyser.getFloatTimeDomainData(wave);
+
+  // In testing, with FFT size of 32, bucket #19 correspnds with metronome
+  // ...but probably not your sound.
+  for (i = 0; i < analysisArray.length; i++) {
+    const magicBucket = analysisArray[i].freq;
+
+    // Determine pulse if frequency threshold is exceeded.
+    // -60 was determined empirically, you'll need to find your own threshold
+    let hit = (freq[magicBucket] > trimGain);
+    
+    // An alternative approach is to check for a peak, regardless of freq
+    // let hit = thresholdPeak(wave, 0.004);
+
+    if (hit) {
+      // Use the IntevalMeter (provided by util.js)
+      // to track the time between pulses.
+
+      // Returns TRUE if pulse was recorded, or FALSE if seems to be part of an already noted pulse
+      let pulsed = intervalMeter.pulse();
+
+      if (pulsed) {
+        // Debug
+        // let avgMs = intervalMeter.calculate();
+        // let avgBpm = 1.0 / (avgMs / 1000.0) * 60.0;
+        // console.log('level: ' + freq[magicBucket] +
+        //   '\tms: ' + avgMs +
+        //   '\tbpm: ' + avgBpm);
+        document.getElementById('hit').classList.add('hit');
+        document.getElementById("low").style.opacity = "1";
+
+        analysisArray[i].action();
+      } else {
+        document.getElementById('hit').classList.remove('hit');
+        document.getElementById("low").style.opacity = "0.1";
+      
+      }
+    }
+  }
+  // Optional rendering of data
+  //visualiser.renderWave(wave, true);
+  visualiser.renderFreq(freq);
+
+  // Run again
+  window.requestAnimationFrame(analyse);
 };
