@@ -62,9 +62,9 @@ function onMicSuccess(stream) {
 
   // fftSize must be a power of 2. Higher values slower, more detailed
   // Range is 32-32768
-  analyser.fftSize = 512;
+  analyser.fftSize = 128;
 
-      //128?
+      //128?      
 
   // smoothingTimeConstant ranges from 0.0 to 1.0
   // 0 = no averaging. Fast response, jittery
@@ -75,12 +75,12 @@ function onMicSuccess(stream) {
   // could be useful for excluding background noise.
   const lowcut = audioCtx.createBiquadFilter();
   lowcut.type = "lowshelf";
-  lowcut.frequency.value = 500;
+  lowcut.frequency.value = 0;
   lowcut.gain.value = 0;
 
   const highcut = audioCtx.createBiquadFilter();
   highcut.type = "highshelf";
-  highcut.frequency.value = 1500;
+  highcut.frequency.value = 500;
   highcut.gain.value = 0;
 
   // Microphone -> filters -> analyser
@@ -104,9 +104,9 @@ function analyse() {
 
   // In testing, with FFT size of 32, bucket #19 correspnds with metronome
   // ...but probably not your sound.
-  const magicBucket = 13;
+  const magicBucket = 3;
   const middleBucket = 100;
-  const otherBucket = 26;
+  const otherBucket = 7;
 
   // Determine pulse if frequency threshold is exceeded.
   // -60 was determined empirically, you'll need to find your own threshold
@@ -135,7 +135,6 @@ function analyse() {
       //   '\tms: ' + avgMs +
       //   '\tbpm: ' + avgBpm);
       document.getElementById('hit').classList.add('hit');
-      console.log("LOW")
       document.getElementById("low").style.opacity = "1";
 
       //Shrink balloon
@@ -163,7 +162,6 @@ function analyse() {
       //   '\tms: ' + avgMs +
       //   '\tbpm: ' + avgBpm);
       document.getElementById('hit').classList.add('hit');
-      console.log("HIGH")
       document.getElementById("high").style.opacity = "1";
 
       //Fill balloon
@@ -229,14 +227,63 @@ function updateDisplay() {
   document.getElementById('intervalMs').innerText = parseInt(currentIntervalMs) + ' ms.';
   document.getElementById('intervalBpm').innerText = currentBpm + ' bpm.';
 
-  if (currentBpm == 0) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//MOVING TYME
+
+let divide = 25;
+let moveBeat = Math.floor(currentBpm/divide);
+
+  if (currentBpm == 0 || currentBpm > 200) {
     //Nothing
-  } else if (currentBpm < 120) {
-    ballon.x += 2
   } else {
-    ballon.x -= 2
+    ballon.x += moveBeat;
+    console.log(currentBpm);
+  
   }
 
+
+
+
+
+
+
+
+
+
+
+
+  /*
+  else if (currentBpm < 50) {
+    ballon.x += moveBeat;
+  } else if (currentBpm > 50 && currentBpm < 100) {
+    ballon.x -= moveBeat;
+  }
+*/
   // Set colour
   document.body.style.backgroundColor = 'hsl(' + h + ', 100%, ' + l + '%)';
 }
@@ -341,4 +388,9 @@ function popBalloon() {
     ballon.size = orgSize;
     centerBallon();
   }, 1000);
+};
+
+function turnOffSize() {
+  shrinkSpeed = 0;
+  fillSpeed = 0;
 };
