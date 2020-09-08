@@ -400,11 +400,8 @@ let analysisArray = [
       //Shrink balloon here
       ballon.size += fillSpeed;
     }
-  },
-
-function doThis() {
-  console.log("hellllllooo");
-}
+  }
+];
 
 function analyse() {
   const bins = analyser.frequencyBinCount;
