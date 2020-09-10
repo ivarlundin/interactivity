@@ -257,8 +257,8 @@ function turnOffSize() {
 };
 
 
-let keyA = 2;
-let keyB = 15;
+let keyA = 7;
+let keyB = 9;
 let keyC = 27;
 
 //Here we assign bucket and an action for that
