@@ -14,7 +14,7 @@ if (document.readyState != 'loading') {
 
 
 
-const trimGain = -35;
+const trimGain = -45;
 
 
 //speed for balloon
@@ -56,7 +56,7 @@ function onMicSuccess(stream) {
 
   // fftSize must be a power of 2. Higher values slower, more detailed
   // Range is 32-32768
-  analyser.fftSize = 128;
+  analyser.fftSize = 512;
 
       //128?      
 
@@ -274,7 +274,7 @@ let analysisArray = [
     }
   },
   {
-    freq: 7,
+    freq: 47,
     action: function() {
       console.log('pop');
       
@@ -284,7 +284,7 @@ let analysisArray = [
     }
   },
   {
-    freq: 4,
+    freq: 38,
     action: function() {
       if (ballon.size > 100) {
         popBalloon();
