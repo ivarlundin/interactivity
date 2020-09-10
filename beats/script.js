@@ -19,13 +19,14 @@ const trimGain = -35;
 
 //speed for balloon
 let shrinkSpeed = 5;
-let fillSpeed = 5;
+let fillSpeed = 3;
 
-let orgSize = 50;
+let orgSize = 25;
 let ballon = { 
   x: 0, 
   y: 0, 
-  size: orgSize
+  size: orgSize,
+  color: 'rgb(0, 255, 0)',
 };
 
 
@@ -110,15 +111,15 @@ function updateDisplay() {
 //Beat triggering
 
 let divide = 25;
-let moveBeat = Math.floor(currentBpm/divide);
+let moveBeat = 10;
 
-  if (currentBpm == 0 || currentBpm > 200) {
-    //Nothing
-  } else {
-    ballon.x += moveBeat;
-    console.log(currentBpm);
-  
-  }
+if (currentBpm == 0 || currentBpm > 200) {
+  //Nothing
+} else if (currentBpm < 100) {
+  ballon.x += moveBeat;
+} else {
+  ballon.x -= moveBeat;
+}
 
   /*
   else if (currentBpm < 50) {
@@ -209,12 +210,11 @@ function centerBallon() {
 
   drawCanvas();
 }
-
 function drawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath();
   ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
-  ctx.fillStyle = "rgb(255, 0, 0)";
+  ctx.fillStyle = ballon.color;
   ctx.fill();
 }
 
@@ -228,15 +228,27 @@ function animate() {
 }
 
 animate();
+let popSpeed = 1;
 
 
 function popBalloon() {
-  ballon.size = 0;
+  let ogColor = ballon.color;
 
-  setTimeout(function() {
-    ballon.size = orgSize;
-    centerBallon();
-  }, 1000);
+  if (ballon.size > 0) {
+    ballon.color = 'rgb(255, 0, 0)';
+    setTimeout(function() {
+      ballon.size -= popSpeed;
+      window.requestAnimationFrame(popBalloon);
+      popSpeed = popSpeed * 1.2;
+    }, );
+  } else {
+    ballon.color = 'rgb(0, 255, 0)';
+  
+    setTimeout(function() {
+      ballon.size = orgSize;
+      centerBallon();
+    }, 1000);
+  }
 };
 
 function turnOffSize() {
@@ -249,34 +261,41 @@ function turnOffSize() {
 //Here we assign bucket and an action for that
 let analysisArray = [
   {
-    freq: 2,
+    freq: 0,
     action: function() {
       console.log('low');
 
       //Shrink balloon here
-      if (ballon.size <= 1) {
-        ballon.size = 1;
-      } else {
-        ballon.size -= fillSpeed;
-      }
+      //if (ballon.size <= 1) {
+      //  ballon.size = 1;
+      //} else {
+      //  ballon.size -= fillSpeed;
+      //}      
     }
   },
   {
-    freq: 9,
+    freq: 7,
     action: function() {
       console.log('pop');
       
       //Shrink balloon here
       popBalloon();
+      console.log(ballon.size);
     }
   },
   {
-    freq: 5,
+    freq: 4,
     action: function() {
+      if (ballon.size > 100) {
+        popBalloon();
+      } else {
       console.log('high');
 
       //Shrink balloon here
+      //ballon.size += fillSpeed;
+      ballon.y -= 8;
       ballon.size += fillSpeed;
+      }
     }
   }
 ];
@@ -326,3 +345,16 @@ function analyse() {
   // Run again
   window.requestAnimationFrame(analyse);
 };
+
+function falling() {
+  setTimeout(function() {
+    ballon.y += 1;
+    ballon.size -= 0.1;
+    window.requestAnimationFrame(falling);
+  }, 50);
+}
+falling();
+
+function refresh() {
+  location.reload();
+}
