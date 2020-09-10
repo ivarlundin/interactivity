@@ -56,7 +56,7 @@ function onMicSuccess(stream) {
 
   // fftSize must be a power of 2. Higher values slower, more detailed
   // Range is 32-32768
-  analyser.fftSize = 512;
+  analyser.fftSize = 1024;
 
       //128?      
 
@@ -257,14 +257,14 @@ function turnOffSize() {
 };
 
 
-let keyA = 7;
-let keyB = 9;
+let keyA = 13;
+let keyB = 17;
 let keyC = 27;
 
 //Here we assign bucket and an action for that
 let analysisArray = [
   {
-    freq: 0,
+    freq: 17,
     action: function() {
       console.log('low');
 
