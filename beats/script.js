@@ -257,6 +257,9 @@ function turnOffSize() {
 };
 
 
+let keyA = 2;
+let keyB = 15;
+let keyC = 27;
 
 //Here we assign bucket and an action for that
 let analysisArray = [
@@ -274,7 +277,7 @@ let analysisArray = [
     }
   },
   {
-    freq: 47,
+    freq: 30,
     action: function() {
       console.log('pop');
       
@@ -284,7 +287,7 @@ let analysisArray = [
     }
   },
   {
-    freq: 38,
+    freq: 14,
     action: function() {
       if (ballon.size > 100) {
         popBalloon();
@@ -299,6 +302,10 @@ let analysisArray = [
     }
   }
 ];
+
+
+let keyGain = -55;
+
 
 function analyse() {
   const bins = analyser.frequencyBinCount;
@@ -338,6 +345,35 @@ function analyse() {
       }
     }
   }
+  //Glass example
+  let hitA = (freq[keyA] > keyGain);    //If amplitude of freq is higher than min
+  let hitB = (freq[keyB] > keyGain);
+  let hitC = (freq[keyC] > keyGain);
+
+  //We only have two hands right ? :D 
+  if (hitA && hitB) {
+    let pulsed = intervalMeter.pulse();
+
+    if (pulsed) {
+      console.log('we have a winner')
+      document.getElementById('lockText').innerHTML = "Unlocked";
+      document.getElementById('lockText').style.color = 'green';
+      document.getElementById('lockText').style.fontFamily = 'sans-serif';
+      document.getElementById('lockText').style.fontStyle = 'italic';
+      document.getElementById('lockText').style.fontSize = '40px';
+
+    } else {
+      //cool
+    }
+  } else {
+    //no
+  }
+
+  //setTimeout(function () { 
+  //  console.log(hitA, hitB, hitC);
+  //}, 1000);
+
+
   // Optional rendering of data
   //visualiser.renderWave(wave, true);
   visualiser.renderFreq(freq);
@@ -353,7 +389,8 @@ function falling() {
     window.requestAnimationFrame(falling);
   }, 50);
 }
-falling();
+
+//to start, call falling
 
 function refresh() {
   location.reload();

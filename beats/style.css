@@ -53,3 +53,8 @@ body {
 #ballons {
   border: 2px solid black;
 }
+#lockText {
+  padding: 30px;
+  transition: ease 1s;
+  color: black;
+}
