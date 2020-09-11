@@ -57,4 +57,5 @@ body {
   padding: 30px;
   transition: ease 1s;
   color: black;
+  display: none; /**/
 }

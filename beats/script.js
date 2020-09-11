@@ -212,6 +212,7 @@ function centerBallon() {
 }
 function drawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   ctx.beginPath();
   ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
   ctx.fillStyle = ballon.color;
@@ -287,7 +288,7 @@ let analysisArray = [
     }
   },
   {
-    freq: 14,
+    freq: 23,
     action: function() {
       if (ballon.size > 100) {
         popBalloon();
