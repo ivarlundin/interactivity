@@ -176,6 +176,10 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
 let xStep = 0;
+/*
+ctx.fillStyle = "black";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+*/
 
 function drawCanvas() {
     let output = analyse();
@@ -195,6 +199,7 @@ function drawCanvas() {
 
       //Clear canvas
       ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      //ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     } else {
@@ -208,7 +213,10 @@ function drawCanvas() {
       //console.log('BRIGHT ' + specialBucket);
       //console.log('MOVE ' + yCount);
 
-      ctx.fillStyle = "hsl(100, 100%, " + specialBucket + "%)";
+      //ctx.fillStyle = "hsl(100, 100%, " + specialBucket + "%)";
+      let wColor = Math.floor(specialBucket / 100 * 240);
+      //console.log(wColor);
+      ctx.fillStyle = "hsl(" + wColor + ", " + specialBucket + "%, " + specialBucket + "%)";
       ctx.fillRect(xStep, yCount, canvas.width/1000, yMove);
 
       yCount += yMove;
@@ -217,7 +225,7 @@ function drawCanvas() {
       }
     }
 
-    xStep = xStep + 0.25
+    xStep = xStep + 0.5
     //ctx.fillStyle = "rgb(0, 255, 255";
     //ctx.fillRect(0, 0, canvas.width, canvas.height);
     setTimeout(function() {
