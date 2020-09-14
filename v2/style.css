@@ -11,7 +11,7 @@ html {
   }
   
   body {
-    padding: 2em;
+    /*padding: 2em;*/
   }
   
   .hit {
@@ -23,4 +23,39 @@ html {
     border: 1px solid dimgray;
     display: inline-block;
   }
-  
+
+  .newTest {
+      margin: 0;
+      width: 100vw; 
+      height: 50vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background: linear-gradient(hsl(200, 50%, 50%), rgb(120, 0, 200));
+  }
+  .testContainer {
+      opacity: 1;
+
+      width: 30vw;
+      height: 15vh;
+
+      background: white;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  #canvas {
+      width: 100vw;
+      height: 75vh;
+  }
+  .sider {
+      width: 20vw;
+  }
+
+  #myRange, #lowRange {
+    width: 80vw;
+  }

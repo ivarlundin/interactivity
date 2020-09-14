@@ -38,7 +38,7 @@ function onMicSuccess(stream) {
   // smoothingTimeConstant ranges from 0.0 to 1.0
   // 0 = no averaging. Fast response, jittery
   // 1 = maximum averaging. Slow response, smooth
-  analyser.smoothingTimeConstant = 0.9;
+  analyser.smoothingTimeConstant = 0.1;
 
   // Microphone -> analyser
   const micSource = audioCtx.createMediaStreamSource(stream);
@@ -82,7 +82,8 @@ function analyse() {
 
   // Run again
   window.requestAnimationFrame(analyse);
-
+  let freqData = freq;
+  return freqData
 }
 
 // Returns TRUE if the threshold value is hit between the given frequency range
@@ -94,7 +95,6 @@ function thresholdFrequency(lowFreq, highFreq, freqData, threshold) {
     if (samples[i] > threshold) return true;
     max = Math.max(max, samples[i]);
   }
-
   // For debugging it can be useful to see maximum value within range
   //console.log('Freq max: ' + max);
   return false;
@@ -138,4 +138,112 @@ function sampleData(lowFreq, highFreq, freqData) {
   // Grab a 'slice' of the array between these indexes
   const samples = freqData.slice(lowIndex, highIndex);
   return samples;
+}
+
+/*
+function testVisual() {
+    setTimeout(function() {
+        //console.log('hello');
+        let data = getMySample(20, 40); 
+        let specialBucket = Math.abs(data[0]);
+        specialBucket = specialBucket;
+        specialBucket = Math.round(specialBucket) / 100
+
+        document.getElementById('testObj').style.opacity = specialBucket;
+        
+
+        requestAnimationFrame(testVisual);
+    }, 10   );
+    return true;
+}
+testVisual();
+
+
+
+let orientation = 0;
+let colorOne = 'hsl(10, 50%, 50%)';
+let colorTwo = 'hsl(200, 50%, 50%)';
+grad.style.backgroundImage = '-moz-linear-gradient('
+        + orientation + ', ' + colorOne + ', ' + colorTwo + ')';
+*/
+
+//CANVAS
+let freqRange = 250;
+let lowRange = 0;
+
+
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+
+let xStep = 0;
+
+function drawCanvas() {
+    let output = analyse();
+
+    let mySample = output.slice(lowRange, freqRange);
+   
+    let maxBright = 100;
+    let times = freqRange;
+    let step = maxBright / times;
+    let yMove = canvas.height / times; 
+
+    let stepCount = 0;
+    let yCount = 0;
+
+    if (xStep > canvas.width) {
+      xStep = 0;
+
+      //Clear canvas
+      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    } else {
+      for (i = times; i > 0; i--) {
+      
+      let specialBucket = Math.abs(mySample[i]);
+      specialBucket = Math.round(specialBucket);
+
+      //console.log(specialBucket);
+      
+      //console.log('BRIGHT ' + specialBucket);
+      //console.log('MOVE ' + yCount);
+
+      ctx.fillStyle = "hsl(100, 100%, " + specialBucket + "%)";
+      ctx.fillRect(xStep, yCount, canvas.width/1000, yMove);
+
+      yCount += yMove;
+      //console.log("Drawn: " + i + "#");
+      //xStep += i;
+      }
+    }
+
+    xStep = xStep + 0.25
+    //ctx.fillStyle = "rgb(0, 255, 255";
+    //ctx.fillRect(0, 0, canvas.width, canvas.height);
+    setTimeout(function() {
+        //console.log("let's do it again");
+        window.requestAnimationFrame(drawCanvas);
+    }, 0);
+}
+
+setTimeout(function() {
+    drawCanvas();
+}, 1000);
+
+
+
+
+//SLIDER
+var slider = document.getElementById("myRange");
+
+slider.oninput = function() {
+  freqRange = slider.value;
+  //console.log(freqRange);
+}
+
+var slider2 = document.getElementById("lowRange");
+
+slider2.oninput = function() {
+  lowRange = slider2.value;
+  //console.log(freqRange);
 }
