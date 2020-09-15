@@ -193,7 +193,7 @@ function RandomColor (){
   let x = Math.floor(Math.random() * 256);
   let y = Math.floor(Math.random() * 256);
   let z = Math.floor(Math.random() * 256);
-  let newColor = 'rgb(' + x + ',' + y + ',' + z + ')';
+  let newColor = "rgb(" + x + "," + y + "," + z + ")"
   console.log(newColor);  
 }
 
