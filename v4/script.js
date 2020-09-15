@@ -69,6 +69,11 @@ function analyse() {
     document.getElementById('peakTarget').classList.add('hit');
   
     ballon.color = 'rgb(0, 0, 255)';
+    ballon.size = ballon.size * 1.20;
+    wiggleState = true;
+    setTimeout(function() {
+      wiggleState = false;
+    }, 1000);
     drawCanvas();
   }
   // Test whether we hit a sustained (average) level
@@ -284,6 +289,9 @@ function wiggle() {
 }
 
 wiggle(); 
+
+
+
 
 function behavior1() {
   let triggerAmplitude = 10;
