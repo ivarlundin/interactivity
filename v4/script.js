@@ -67,15 +67,21 @@ function analyse() {
   hit = thresholdPeak(wave, 0.9);
   if (hit) {
     document.getElementById('peakTarget').classList.add('hit');
+  
+    ballon.color = 'rgb(0, 0, 255)';
+    drawCanvas();
   }
-
   // Test whether we hit a sustained (average) level
   // This must be a longer, sustained noise.
   hit = thresholdSustained(wave, 0.3);
   if (hit) {
     document.getElementById('susTarget').classList.add('hit');
-  }
+    crazyState = true;
 
+  } else {
+    crazyState = false;
+    ballon.color = 'rgb(0, 255, 0)';
+  }
   // Optional rendering of data
   visualiser.renderWave(wave, true);
   visualiser.renderFreq(freq);
@@ -168,6 +174,7 @@ grad.style.backgroundImage = '-moz-linear-gradient('
 */
 
 //CANVAS
+
 let freqRange = 250;
 let lowRange = 0;
 let shrinkSpeed = 5;
@@ -176,7 +183,8 @@ let fillSpeed = 3;
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
-let orgSize = 5;
+
+let orgSize = 25;
 let ballon = { 
   x: 0, 
   y: 0, 
@@ -211,7 +219,11 @@ let movement = 20;
 let crazyState = false; 
 
 function animate() {
+
   if (crazyState == false) {
+    ballon.color = 'rgb(0, 255, 0)';
+    drawCanvas();
+  
     requestAnimationFrame(animate);
 
   } else {
@@ -223,10 +235,12 @@ function animate() {
 
       ballon.x = ballon.x + Math.floor(Math.random() * movement);
       ballon.y = ballon.y + Math.floor(Math.random() * movement);
+      ballon.color = "rgb(255, 0, 0)";
 
       drawCanvas();
     } else if (xMove > 200) {
       xMove = 1;
+  
     } else {
       centerBallon(); 
 
@@ -239,7 +253,37 @@ function animate() {
   }
 }
 
+let pushVector = 0.1; 
+
+function push(distance) {
+  let randomX = Math.floor(Math.random() * distance);
+  let randomY = Math.floor(Math.random() * distance);
+
+  if (Math.random() < 0.5) {
+    ballon.x -= randomX;
+    ballon.y -= randomY;
+  } else {
+    ballon.x += randomX;
+    ballon.y += randomY;
+  }
+  
+}
+
 animate();
+
+let wiggleState = false; 
+
+function wiggle() {
+  if (wiggleState == false) {
+    //
+  } else {
+    let rand = Math.random() * 10;
+    push(rand);
+  }
+  requestAnimationFrame(wiggle);
+}
+
+wiggle(); 
 
 function behavior1() {
   let triggerAmplitude = 10;
@@ -260,7 +304,7 @@ function behavior1() {
   requestAnimationFrame(behavior1);
 }
 
-behavior1();
+//behavior1();
 
 
 
