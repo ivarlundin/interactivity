@@ -188,14 +188,6 @@ function sampleData(lowFreq, highFreq, freqData) {
 }
 
 
-
-
-
-
-
-
-
-
 //CANVAS
 let canvas = document.getElementById('ballons');
 let ctx = canvas.getContext('2d');
@@ -229,19 +221,21 @@ function animate() {
 }
 
 animate();
-let popSpeed = 1;
 
+let popSpeed = 1;
 
 function popBalloon() {
   let ogColor = ballon.color;
 
   if (ballon.size > 0) {
     ballon.color = 'rgb(255, 0, 0)';
+
     setTimeout(function() {
       ballon.size -= popSpeed;
       window.requestAnimationFrame(popBalloon);
       popSpeed = popSpeed * 1.2;
     }, );
+
   } else {
     ballon.color = 'rgb(0, 255, 0)';
   
@@ -256,11 +250,6 @@ function turnOffSize() {
   shrinkSpeed = 0;
   fillSpeed = 0;
 };
-
-
-let keyA = 13;
-let keyB = 17;
-let keyC = 27;
 
 //Here we assign bucket and an action for that
 let analysisArray = [
