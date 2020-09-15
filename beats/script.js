@@ -188,14 +188,6 @@ function sampleData(lowFreq, highFreq, freqData) {
 }
 
 
-
-
-
-
-
-
-
-
 //CANVAS
 let canvas = document.getElementById('ballons');
 let ctx = canvas.getContext('2d');
@@ -210,6 +202,7 @@ function centerBallon() {
 
   drawCanvas();
 }
+
 function drawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -219,16 +212,16 @@ function drawCanvas() {
   ctx.fill();
 }
 
-centerBallon();
+//centerBallon();
 
-
-
+/*
 function animate() {
   requestAnimationFrame(animate);
   drawCanvas();
 }
 
 animate();
+*/
 let popSpeed = 1;
 
 

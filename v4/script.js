@@ -170,16 +170,108 @@ grad.style.backgroundImage = '-moz-linear-gradient('
 //CANVAS
 let freqRange = 250;
 let lowRange = 0;
-
+let shrinkSpeed = 5;
+let fillSpeed = 3;
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
+let orgSize = 5;
+let ballon = { 
+  x: 0, 
+  y: 0, 
+  size: orgSize,
+  color: 'rgb(0, 255, 0)',
+};
+
+function drawCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.beginPath();
+  ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
+  ctx.fillStyle = ballon.color;
+  ctx.fill();
+}
+
+function centerBallon() {
+  let os = ballon.size;
+
+  let wt = canvas.width;
+  let ht = canvas.height;
+  ballon.x = wt/2;
+  ballon.y = ht/2;
+
+  drawCanvas();
+}
+
+drawCanvas();
+centerBallon();
+
+let movement = 20;
+let crazyState = false; 
+
+function animate() {
+  if (crazyState == false) {
+    requestAnimationFrame(animate);
+
+  } else {
+    let xMove = 1;
+    let yMove = 1;
+
+    if (xMove < 100) {
+      centerBallon(); 
+
+      ballon.x = ballon.x + Math.floor(Math.random() * movement);
+      ballon.y = ballon.y + Math.floor(Math.random() * movement);
+
+      drawCanvas();
+    } else if (xMove > 200) {
+      xMove = 1;
+    } else {
+      centerBallon(); 
+
+      ballon.x = ballon.x + Math.abs(Math.floor(Math.random() * movement));
+      ballon.y = ballon.y + Math.abs(Math.floor(Math.random() * movement));
+
+      drawCanvas();
+    }
+    requestAnimationFrame(animate);
+  }
+}
+
+animate();
+
+function behavior1() {
+  let triggerAmplitude = 10;
+
+  let output = analyse();
+  let mySample = output.slice(20, 100);
+
+  for (i = 0; i < mySample.length; i++) {
+    let inverse = Math.abs(mySample[i]);
+
+    if (inverse> triggerAmplitude) {
+
+      //Action 
+      console.log('trigger - behavior 1');
+      return;
+    }
+  }
+  requestAnimationFrame(behavior1);
+}
+
+behavior1();
+
+
+
+
+
+/*
 let xStep = 0;
 /*
 ctx.fillStyle = "black";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
-*/
+
 
 function drawCanvas() {
     let output = analyse();
@@ -239,20 +331,4 @@ setTimeout(function() {
     drawCanvas();
 }, 1000);
 
-
-
-
-//SLIDER
-var slider = document.getElementById("myRange");
-
-slider.oninput = function() {
-  freqRange = slider.value;
-  //console.log(freqRange);
-}
-
-var slider2 = document.getElementById("lowRange");
-
-slider2.oninput = function() {
-  lowRange = slider2.value;
-  //console.log(freqRange);
-}
+*/
