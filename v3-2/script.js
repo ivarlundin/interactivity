@@ -166,7 +166,7 @@ let colorTwo = 'hsl(200, 50%, 50%)';
 grad.style.backgroundImage = '-moz-linear-gradient('
         + orientation + ', ' + colorOne + ', ' + colorTwo + ')';
 */
-
+/*
 //CANVAS
 let freqRange = 250;
 let lowRange = 0;
@@ -180,7 +180,7 @@ let xStep = 0;
 ctx.fillStyle = "black";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 */
-
+/*
 function drawCanvas() {
     let output = analyse();
 
@@ -253,5 +253,46 @@ var slider2 = document.getElementById("lowRange");
 
 slider2.oninput = function() {
   lowRange = slider2.value;
+  //console.log(freqRange);
+}
+*/
+
+let canvas = document.querySelector('canvas');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let c = canvas.getContext('2d');
+console.log(canvas);
+
+function makeCircle(x, y, radius, color) {
+  c.beginPath();
+        c.arc(x, y, radius, 0,  Math.PI * 2, true);
+        c.fillStyle = color;
+        c.fill();
+}
+function drawCircles(dev) {
+  c.clearRect(0, 0, canvas.width, canvas.height);
+  let deviation = dev;
+
+  for (i = 0; i < 10; i++) {
+    let xPos = Math.floor(canvas.width /2 * Math.random());;
+    let yPos = Math.floor(canvas.height /2 * Math.random());
+
+    makeCircle(xPos, yPos, 20, 'black');
+  }
+}
+let number = 1;
+
+function animate() {
+  drawCircles(number);
+  requestAnimationFrame(animate);
+}
+
+//SLIDER
+var slider = document.getElementById("myRange");
+
+slider.oninput = function() {
+  theDev = slider.value;
   //console.log(freqRange);
 }
