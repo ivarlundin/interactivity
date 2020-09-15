@@ -1,0 +1,61 @@
+html {
+  box-sizing: border-box;
+
+}
+html, body {
+  padding: 0;
+  margin: 0;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+
+body {
+  padding: 2em;
+  background-color: white !important;
+}
+
+.hit {
+  background-color: deeppink;
+}
+
+.target {
+  padding: 1em;
+  border: 1px solid dimgray;
+  display: inline-block;
+}
+
+
+.tuner {
+  width: 100px;
+  height: 300px;
+}
+
+.box {
+  width: 100px;
+  height: 100px;
+}
+#high {
+  background-color: green;
+  opacity: 0.1;
+
+}
+#middle {
+  background-color: yellow;
+  opacity: 0.1;
+
+}
+#low {
+  background-color: red;
+  opacity: 0.1;
+}
+#ballons {
+  border: 2px solid black;
+}
+#lockText {
+  padding: 30px;
+  transition: ease 1s;
+  color: black;
+  display: none; /**/
+}

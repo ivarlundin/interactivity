@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>beats</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h2 id="lockText">Locked</h1>
+
+  <div class="container">
+    <canvas id="ballons" width="800px" height="800px">
+      
+    </canvas>
+
+    <button onclick="popBalloon()">Pop</button>
+    <div id="intervalBpm"></div>
+    <button onclick="turnOffSize()">TurnOffTheSizeee</button>
+    <button onclick="refresh()">refresh</button>
+    <button onclick="falling()">start balloon</button>
+
+
+
+    <div class="tuner">
+      <div id="high" class="box">
+
+      </div>
+      <div id="middle" class="box">
+        
+      </div>
+      <div id="low" class="box">
+    </div> 
+  </div>
+
+  </div>
+
+
+
+
+  <h1>beats</h1>
+  <div class="target" id="hit">Peak threshold</div>
+  <div id="intervalMs">
+
+  </div>
+  
+  <div id="visualiser"></div>
+  <script src="../util.js"></script>
+  <script src="../visualiser.js"></script>  
+  <script src="script.js"></script>
+</body>
+
+</html>
