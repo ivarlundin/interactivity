@@ -189,22 +189,14 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
 //random color 
-function random_rgba() {
-  var o = Math.round, r = Math.random, s = 255;
-  return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
-}
-
-for (var i=0; i<10; i++) {
-  console.log( random_rgba() ) 
-  
-}    
+var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
 
 let orgSize = 25;
 let ballon = { 
   x: 0, 
   y: 0, 
   size: orgSize,
-  color: 'rgb(0, 255, 0)',
+  color: randomColor,
 };
 
 let bgState = 0;
