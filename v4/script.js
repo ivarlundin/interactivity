@@ -73,7 +73,7 @@ function analyse() {
     wiggleState = true;
     setTimeout(function() {
       wiggleState = false;
-    }, 1000);
+    }, 1000 - (ballon.size * 7));
     drawCanvas();
   }
   // Test whether we hit a sustained (average) level
@@ -197,9 +197,22 @@ let ballon = { 
   color: 'rgb(0, 255, 0)',
 };
 
-function drawCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+let bgState = 0;
 
+function background(){
+  if (bgState == 1) {
+    ctx.fillStyle = 'rgba(0, 255, 0, 0.2';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+function drawCanvas() {
+  if (ballon.size > 600) {
+    bgState = 1;
+    ballon.size = orgSize;
+    centerBallon();
+  }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  background();
   ctx.beginPath();
   ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
   ctx.fillStyle = ballon.color;
