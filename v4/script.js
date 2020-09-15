@@ -189,21 +189,27 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
 //random color 
-var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+function RandomColor (){
+  let x = Math.floor(Math.random() * 256);
+  let y = Math.floor(Math.random() * 256);
+  let z = Math.floor(Math.random() * 256);
+  let newColor = 'rgb(' + x + ',' + y + ',' + z + ')';
+  console.log(newColor);  
+}
 
 let orgSize = 25;
 let ballon = { 
   x: 0, 
   y: 0, 
   size: orgSize,
-  color: randomColor,
+  color: 'rgb(0, 255, 0)',
 };
 
 let bgState = 0;
 
 function background(){
   if (bgState == 1) {
-    ctx.fillStyle = 'rgba(0, 255, 0, 0.2';
+    ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 }
