@@ -271,7 +271,7 @@ function timeout() {
 
     drawCanvas(); //Draw canvas
     timeout(); //loop
-  }, 50);
+  }, 100);
 }
 
 timeout();
