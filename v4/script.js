@@ -68,7 +68,7 @@ function analyse() {
   if (hit) {
     document.getElementById('peakTarget').classList.add('hit');
   
-    ballon.color = 'rgb(0, 0, 255)';
+    colorBalloon('blue');
     ballon.size = ballon.size * 1.20;
     wiggleState = true;
     setTimeout(function() {
@@ -79,13 +79,15 @@ function analyse() {
   // Test whether we hit a sustained (average) level
   // This must be a longer, sustained noise.
   hit = thresholdSustained(wave, 0.3);
+  let hitCount = 0;
   if (hit) {
     document.getElementById('susTarget').classList.add('hit');
     crazyState = true;
+    hitCount = 1;
 
-  } else {
+  } else if (hitCount == 1) {
     crazyState = false;
-    ballon.color = 'rgb(0, 255, 0)';
+    //colorBalloon();
   }
   // Optional rendering of data
   visualiser.renderWave(wave, true);
@@ -189,13 +191,16 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
 //random color 
-function RandomColor (){
-  let x = Math.floor(Math.random() * 256);
-  let y = Math.floor(Math.random() * 256);
-  let z = Math.floor(Math.random() * 256);
-  let newColor = "rgb(" + x + "," + y + "," + z + ")"
-  console.log(newColor);  
+/*
+function randomColor() {
+  let x = Math.floor(Math.random() * 255);
+  let y = Math.floor(Math.random() * 255);
+  let z = Math.floor(Math.random() * 255);
+  let newColor = "rgb(" + x + ", " + y + ", " + z + ")"
+  console.log(newColor); 
+  return newColor; 
 }
+*/
 
 let orgSize = 25;
 let ballon = { 
@@ -206,6 +211,23 @@ let ballon = { 
 };
 
 let bgState = 0;
+let bColorState = 'green';
+
+function colorBalloon(){
+  if (bColorState == 'red') { //red
+    ctx.fillStyle = 'rgb(255, 0, 0)';
+    bColorState = 'red';
+
+  } else if (bColorState == 'blue') { 
+    ctx.fillStyle = 'rgb(0, 0, 255)';
+    bColorState = 'blue';
+  } else { //default green
+    //ctx.fillStyle = 'rgb(0, 255, 0)';
+    ctx.fillStyle = randomColor();
+    bColorState = 'green';
+  }
+  //console.log('balloon color: ' + bgState);
+};
 
 function background(){
   if (bgState == 1) {
@@ -223,7 +245,7 @@ function drawCanvas() {
   background();
   ctx.beginPath();
   ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
-  ctx.fillStyle = ballon.color;
+  colorBalloon();
   ctx.fill();
 }
 
@@ -247,7 +269,7 @@ let crazyState = false;
 function animate() {
 
   if (crazyState == false) {
-    ballon.color = 'rgb(0, 255, 0)';
+    //colorBalloon();
     drawCanvas();
   
     requestAnimationFrame(animate);
@@ -261,7 +283,7 @@ function animate() {
 
       ballon.x = ballon.x + Math.floor(Math.random() * movement);
       ballon.y = ballon.y + Math.floor(Math.random() * movement);
-      ballon.color = "rgb(255, 0, 0)";
+      colorBalloon('red');
 
       drawCanvas();
     } else if (xMove > 200) {
