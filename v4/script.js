@@ -62,9 +62,12 @@ function analyse() {
     peakAction();
   }
 
-
-
-
+  //If a peak and a certain frequency is active 
+  let hitMe = thresholdPeak(wave, 0.9);
+  let hitTwo = thresholdFrequency (50, 80, freq, -70);
+  if (hitMe && hitTwo) {
+    ballon.color = 'rgb(0, 200, 200)';
+  } 
 
 
   // Optional rendering of data
