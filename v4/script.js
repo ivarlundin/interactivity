@@ -57,38 +57,20 @@ function analyse() {
   analyser.getFloatFrequencyData(freq);
   analyser.getFloatTimeDomainData(wave);
 
-  // Test whether we hit a threshold between 0-80Hz (bass region)
-  var hit = thresholdFrequency(0, 80, freq, -70);
+
+
+
+
+  let hit = thresholdPeak(wave, 0.9);
   if (hit) {
-    document.getElementById('freqTarget').classList.add('hit');
+    peakAction();
   }
 
-  // Test whether we hit an peak threshold (this can be a short burst of sound)
-  hit = thresholdPeak(wave, 0.9);
-  if (hit) {
-    document.getElementById('peakTarget').classList.add('hit');
-  
-    colorBalloon('blue');
-    ballon.size = ballon.size * 1.20;
-    wiggleState = true;
-    setTimeout(function() {
-      wiggleState = false;
-    }, 1000 - (ballon.size * 7));
-    drawCanvas();
-  }
-  // Test whether we hit a sustained (average) level
-  // This must be a longer, sustained noise.
-  hit = thresholdSustained(wave, 0.3);
-  let hitCount = 0;
-  if (hit) {
-    document.getElementById('susTarget').classList.add('hit');
-    crazyState = true;
-    hitCount = 1;
 
-  } else if (hitCount == 1) {
-    crazyState = false;
-    //colorBalloon();
-  }
+
+
+
+
   // Optional rendering of data
   visualiser.renderWave(wave, true);
   visualiser.renderFreq(freq);
@@ -96,7 +78,7 @@ function analyse() {
   // Run again
   window.requestAnimationFrame(analyse);
   let freqData = freq;
-  return freqData
+  return freqData;
 }
 
 // Returns TRUE if the threshold value is hit between the given frequency range
@@ -142,6 +124,19 @@ function thresholdSustained(waveData, threshold) {
   return avg >= threshold;
 }
 
+function  averageAmp(freqData, threshold) {
+  let total = 0;
+  for (var i = 0; i < freqData.length; i++) {
+    // Use Math.abs to swap negatives into positive
+    total += Math.abs(freqData[i]);
+  }
+  const avg = total / freqData.length;
+
+  // For debugging it can be useful to see computed average values
+  // console.log('Sustained avg: ' + avg);
+  return avg;
+}
+
 function sampleData(lowFreq, highFreq, freqData) {
   // getIndexForFrequency is a function from util.js
   // it gives us the array index for a given freq
@@ -153,56 +148,20 @@ function sampleData(lowFreq, highFreq, freqData) {
   return samples;
 }
 
-/*
-function testVisual() {
-    setTimeout(function() {
-        //console.log('hello');
-        let data = getMySample(20, 40); 
-        let specialBucket = Math.abs(data[0]);
-        specialBucket = specialBucket;
-        specialBucket = Math.round(specialBucket) / 100
-
-        document.getElementById('testObj').style.opacity = specialBucket;
-        
-
-        requestAnimationFrame(testVisual);
-    }, 10   );
-    return true;
-}
-testVisual();
 
 
 
-let orientation = 0;
-let colorOne = 'hsl(10, 50%, 50%)';
-let colorTwo = 'hsl(200, 50%, 50%)';
-grad.style.backgroundImage = '-moz-linear-gradient('
-        + orientation + ', ' + colorOne + ', ' + colorTwo + ')';
-*/
-
-//CANVAS
-
-let freqRange = 250;
-let lowRange = 0;
-let shrinkSpeed = 5;
-let fillSpeed = 3;
+//////////////
+//  CANVAS
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
-//random color 
-/*
-function randomColor() {
-  let x = Math.floor(Math.random() * 255);
-  let y = Math.floor(Math.random() * 255);
-  let z = Math.floor(Math.random() * 255);
-  let newColor = "rgb(" + x + ", " + y + ", " + z + ")"
-  console.log(newColor); 
-  return newColor; 
-}
-*/
-
+//Set balloon size
 let orgSize = 25;
+let bgState = 0;
+let bColorState = 'green';
+
 let ballon = { 
   x: 0, 
   y: 0, 
@@ -210,31 +169,6 @@ let ballon = { 
   color: 'rgb(0, 255, 0)',
 };
 
-let bgState = 0;
-let bColorState = 'green';
-
-function colorBalloon(){
-  if (bColorState == 'red') { //red
-    ctx.fillStyle = 'rgb(255, 0, 0)';
-    bColorState = 'red';
-
-  } else if (bColorState == 'blue') { 
-    ctx.fillStyle = 'rgb(0, 0, 255)';
-    bColorState = 'blue';
-  } else { //default green
-    //ctx.fillStyle = 'rgb(0, 255, 0)';
-    ctx.fillStyle = randomColor();
-    bColorState = 'green';
-  }
-  //console.log('balloon color: ' + bgState);
-};
-
-function background(){
-  if (bgState == 1) {
-    ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-}
 function drawCanvas() {
   if (ballon.size > 600) {
     bgState = 1;
@@ -260,11 +194,65 @@ function centerBallon() {
   drawCanvas();
 }
 
-drawCanvas();
+function background(){
+  if (bgState == 1) {
+    ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function colorBalloon(){
+  if (bColorState == 'red') { //red
+    ctx.fillStyle = 'rgb(255, 0, 0)';
+    bColorState = 'red';
+
+  } else if (bColorState == 'blue') { 
+    ctx.fillStyle = 'rgb(0, 0, 255)';
+    bColorState = 'blue';
+  } else { //default green
+    //ctx.fillStyle = 'rgb(0, 255, 0)';
+    ctx.fillStyle = 'rgb(0, 255, 0)';
+    bColorState = 'green';
+  }
+  //console.log('balloon color: ' + bgState);
+};
+
 centerBallon();
 
+//PEAK
+
+function peakAction() {
+  ballon.size *= 1.2;
+  console.log(ballon.size);
+  drawCanvas();
+}
+
+//VOLUME
+
+
+//bpm
+
+
+
+
+
+
+
+
+
+
+/*
 let movement = 20;
 let crazyState = false; 
+
+
+
+
+
+
+
+
+
 
 function animate() {
 
@@ -334,8 +322,6 @@ function wiggle() {
 wiggle(); 
 
 
-
-
 function behavior1() {
   let triggerAmplitude = 10;
 
@@ -355,75 +341,55 @@ function behavior1() {
   requestAnimationFrame(behavior1);
 }
 
-//behavior1();
-
-
-
-
-
-/*
-let xStep = 0;
-/*
-ctx.fillStyle = "black";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-
-function drawCanvas() {
-    let output = analyse();
-
-    let mySample = output.slice(lowRange, freqRange);
-    
-   
-    let maxBright = 100;
-    let times = freqRange;
-    let step = maxBright / times;
-    let yMove = canvas.height / times; 
-
-    let stepCount = 0;
-    let yCount = 0;
-
-    if (xStep > canvas.width) {
-      xStep = 0;
-
-      //Clear canvas
-      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-      //ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    } else {
-      for (i = times; i > 0; i--) {
-      
-      let specialBucket = Math.abs(mySample[i]);
-      specialBucket = Math.round(specialBucket);
-
-      //console.log(specialBucket);
-      
-      //console.log('BRIGHT ' + specialBucket);
-      //console.log('MOVE ' + yCount);
-
-      //ctx.fillStyle = "hsl(100, 100%, " + specialBucket + "%)";
-      let wColor = Math.floor(specialBucket / 100 * 240);
-      //console.log(wColor);
-      ctx.fillStyle = "hsl(" + wColor + ", " + specialBucket + "%, " + specialBucket + "%)";
-      ctx.fillRect(xStep, yCount, canvas.width/1000, yMove);
-
-      yCount += yMove;
-      //console.log("Drawn: " + i + "#");
-      //xStep += i;
-      }
-    }
-
-    xStep = xStep + 0.5
-    //ctx.fillStyle = "rgb(0, 255, 255";
-    //ctx.fillRect(0, 0, canvas.width, canvas.height);
-    setTimeout(function() {
-        //console.log("let's do it again");
-        window.requestAnimationFrame(drawCanvas);
-    }, 0);
-}
-
-setTimeout(function() {
-    drawCanvas();
-}, 1000);
 
 */
+
+//Actions
+
+/**
+ // Test whether we hit a threshold between 0-80Hz (bass region)
+  var hit = thresholdFrequency(0, 80, freq, -70);
+  if (hit) {
+    document.getElementById('freqTarget').classList.add('hit');
+  }
+
+  // Test whether we hit an peak threshold (this can be a short burst of sound)
+  hit = thresholdPeak(wave, 0.9);
+  if (hit) {
+    document.getElementById('peakTarget').classList.add('hit');
+  
+    colorBalloon('blue');
+    ballon.size = ballon.size * 1.20;
+    wiggleState = true;
+    setTimeout(function() {
+      wiggleState = false;
+    }, 1000 - (ballon.size * 7));
+    drawCanvas();
+  }
+  // Test whether we hit a sustained (average) level
+  // This must be a longer, sustained noise.
+  hit = thresholdSustained(wave, 0.3);
+  if (hit) {
+    document.getElementById('susTarget').classList.add('hit');
+    crazyState = true;
+
+  } else if (hitCount == 1) {
+    crazyState = false;
+    //colorBalloon();
+  }
+
+
+
+
+  //random color 
+
+function randomColor() {
+  let x = Math.floor(Math.random() * 255);
+  let y = Math.floor(Math.random() * 255);
+  let z = Math.floor(Math.random() * 255);
+  let newColor = "rgb(" + x + ", " + y + ", " + z + ")"
+  console.log(newColor); 
+  return newColor; 
+}
+
+ */
