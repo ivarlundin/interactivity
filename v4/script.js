@@ -57,10 +57,6 @@ function analyse() {
   analyser.getFloatFrequencyData(freq);
   analyser.getFloatTimeDomainData(wave);
 
-
-
-
-
   let hit = thresholdPeak(wave, 0.9);
   if (hit) {
     peakAction();
@@ -124,7 +120,7 @@ function thresholdSustained(waveData, threshold) {
   return avg >= threshold;
 }
 
-function  averageAmp(freqData, threshold) {
+function  averageAmp(freqData) {
   let total = 0;
   for (var i = 0; i < freqData.length; i++) {
     // Use Math.abs to swap negatives into positive
@@ -159,7 +155,7 @@ let ctx = canvas.getContext('2d');
 
 //Set balloon size
 let orgSize = 25;
-let bgState = 0;
+let bgState = 1;
 let bColorState = 'green';
 
 let ballon = { 
@@ -195,10 +191,17 @@ function centerBallon() {
 }
 
 function background(){
-  if (bgState == 1) {
-    ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
+  let a = Math.floor(255 / bgState / 255);
+  let b = Math.floor(255 / bgState / 255);
+  let c = Math.floor(255 / bgState / 255);
+  
+  //let color = 'rgba(' + a + ', ' + b +', ' + c + ', ' + bgState + ')';
+  let color = 'rgba(120, 120, 120, ' + bgState + ')';
+
+  ctx.fillStyle = color;
+  
+  //console.log(color);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function colorBalloon(){
@@ -228,7 +231,55 @@ function peakAction() {
 }
 
 //VOLUME
+/*
+requestAnimationFrame(() => {
+  setTimeout(() => {
+    console.log('hi');
+    console.log('avg amp');
+    console.log('........');
 
+    let data = analyse();
+    console.log(averageAmp(data));
+
+    console.log('........');
+    console.log('done');
+    console.log('-------');
+  }, 1000);
+});
+*/
+
+function timeout() {
+  setTimeout(function () {
+    let hi = 150;
+    let lo = 70;
+
+    let data = analyse();
+    let avg = averageAmp(data);
+  
+    let flatten = Math.floor((avg / hi) * 100);
+    flatten = flatten /100;
+
+    bgState = flatten;
+
+    
+    //console.log('avg = ' + avg);
+    //console.log('flatten = ' + flatten);
+    //console.log('color = ' + color);
+
+    drawCanvas(); //Draw canvas
+    timeout(); //loop
+  }, 50);
+}
+
+timeout();
+
+
+
+function volumeColor() {
+  ballon.size *= 1.2;
+  console.log(ballon.size);
+  drawCanvas();
+}
 
 //bpm
 
