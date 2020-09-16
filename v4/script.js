@@ -66,6 +66,7 @@ function analyse() {
   let hitMe = thresholdPeak(wave, 0.9);
   let hitTwo = thresholdFrequency (50, 80, freq, -70);
   if (hitMe && hitTwo) {
+
     ballon.color = 'rgb(0, 200, 200)';
   } 
 
@@ -178,7 +179,8 @@ function drawCanvas() {
   background();
   ctx.beginPath();
   ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
-  colorBalloon();
+  ctx.fillStyle = ballon.color;
+ 
   ctx.fill();
 }
 
