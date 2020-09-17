@@ -1,4 +1,5 @@
 let audioCtx, analyser, visualiser = null;
+let intervalMeter = new IntervalMeter(5, 200);
 
 if (document.readyState != 'loading') {
   onDocumentReady();
@@ -14,12 +15,14 @@ function onDocumentReady() {
   });
   visualiser = new Visualiser(document.getElementById('visualiser'));
   visualiser.setExpanded(false); // Collapse at startup
-
+  
   // Initalise microphone
   navigator.getUserMedia(
     { audio: true },
     onMicSuccess, // Call this when microphone is ready
     error => { console.error('Could not init microphone', error); });
+
+  
 }
 // Microphone successfully initalised, now have access to audio data
 function onMicSuccess(stream) {
@@ -71,11 +74,22 @@ function analyse() {
     ballon.color = 'rgb(0, 255, 0)';
   }
 
+  let susHit = thresholdSustained(wave, 0.1);
+
+  if (susHit == true && wiggleState == false) {
+    wiggleState = true;
+    //console.log(susHit);
+  } else if (susHit == false && wiggleState == true) {
+    wiggleState = false;
+    //console.log(susHit);
+  } 
 
   // Optional rendering of data
   visualiser.renderWave(wave, true);
   visualiser.renderFreq(freq);
 
+
+  
   // Run again
   window.requestAnimationFrame(analyse);
   let freqData = freq;
@@ -98,12 +112,15 @@ function thresholdFrequency(lowFreq, highFreq, freqData, threshold) {
 
 // Returns TRUE if the data hits a peak threshold at any point
 // Higher FFT sizes are needed to detect shorter pulses.
+let peakData;
+
 function thresholdPeak(waveData, threshold) {
   let max = Number.MIN_SAFE_INTEGER;
   for (var i = 0; i < waveData.length; i++) {
     // Need to use Math.abs to swap negatives into positive
     if (Math.abs(waveData[i]) > threshold) return true;
     max = Math.max(max, Math.abs(waveData[i]));
+    peakData = max;
   }
   // For debugging it can be useful to see maximum value within range
   // console.log('Peak max: ' + max);
@@ -174,16 +191,20 @@ function drawCanvas() {
   if (ballon.size > 600) {
     bgState = 1;
     ballon.size = orgSize;
+
     centerBallon();
   }
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.0';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   background();
   ctx.beginPath();
   ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
-  ctx.fillStyle = ballon.color;
+  ctx.fillStyle = 'hsla(' + colorCycle + ', 50%, 50%, 0.5';
  
   ctx.fill();
 }
+let colorCycle = 0;
 
 function centerBallon() {
   let os = ballon.size;
@@ -202,9 +223,16 @@ function background(){
   let c = Math.floor(255 / bgState / 255);
   
   //let color = 'rgba(' + a + ', ' + b +', ' + c + ', ' + bgState + ')';
-  let color = 'rgba(120, 120, 120, ' + bgState + ')';
+  //let color = 'rgba(120, 120, 120, ' + bgState + ')';
 
-  ctx.fillStyle = color;
+
+  colorCycle = Math.floor(peakData * 150);
+
+  if (colorCycle > 255){
+    colorCycle = 255;
+  }
+  //console.log(colorCycle);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.65)'  ;
   
   //console.log(color);
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -232,7 +260,7 @@ centerBallon();
 
 function peakAction() {
   ballon.size += 1.2;
-  console.log(ballon.size);
+  //console.log(ballon.size);
   drawCanvas();
 }
 
@@ -262,7 +290,7 @@ function timeout() {
     let data = analyse();
     let avg = averageAmp(data);
   
-    let flatten = Math.floor((avg / hi) * 100);
+    let flatten = Math.floor((avg/ hi) * 100);
     flatten = flatten /100;
 
     bgState = flatten;
@@ -283,12 +311,74 @@ timeout();
 
 function volumeColor() {
   ballon.size *= 1.2;
-  console.log(ballon.size);
+  //console.log(ballon.size);
   drawCanvas();
 }
 
 //bpm
 
+function push(distance) {
+  let randomX = Math.floor(Math.random() * distance);
+  let randomY = Math.floor(Math.random() * distance);
+
+  if (Math.random() < 0.5) {
+    ballon.x -= randomX;
+    ballon.y -= randomY;
+  } else {
+    ballon.x += randomX;
+    ballon.y += randomY;
+  }
+  
+}
+function shrink() {
+  if (ballon.size == orgSize) {
+    return true;
+  } else if (ballon.size > orgSize) {
+    ballon.size -= 0.22;
+  } else {
+    return true;
+  }
+}
+function returnHome() {
+  //centerBallon();
+  if (wiggleState == true || ballon.x == canvas.width / 2 && ballon.y == canvas.height / 2) {
+      shrink();
+      return true;
+  } else {
+    //for X
+    if (ballon.x > canvas.width / 2) {
+      ballon.x -= 1;
+    } else if (ballon.x < canvas.width / 2) {
+      ballon.x += 1;
+    }
+  
+    //for Y
+    if (ballon.y > canvas.height / 2) {
+      ballon.y -= 1;
+    } else if (ballon.y < canvas.height / 2) {
+      ballon.y += 1;
+    }
+  }
+  drawCanvas();
+  requestAnimationFrame(returnHome);
+}
+
+let wiggleState = false; 
+
+function wiggle() {
+  let relative = peakData * 55;
+
+  if (wiggleState == false) {
+    returnHome();
+  } else {
+    //let rand = Math.random() * relative;
+    
+    push(relative);
+  }
+  requestAnimationFrame(wiggle);
+}
+
+wiggle(); 
 
 
 
