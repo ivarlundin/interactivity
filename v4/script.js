@@ -60,7 +60,7 @@ function analyse() {
   analyser.getFloatFrequencyData(freq);
   analyser.getFloatTimeDomainData(wave);
 
-  let hit = thresholdPeak(wave, 0.9);
+  let hit = thresholdPeak(wave, 0.99);
   if (hit) {
     peakAction();
   }
@@ -191,7 +191,7 @@ function drawCanvas() {
   if (ballon.size > 600) {
     bgState = 1;
     ballon.size = orgSize;
-
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.075)'
     centerBallon();
   }
   //ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -200,7 +200,7 @@ function drawCanvas() {
   background();
   ctx.beginPath();
   ctx.arc(ballon.x, ballon.y, ballon.size, 0, 2 * Math.PI);
-  ctx.fillStyle = 'hsla(' + colorCycle + ', 50%, 50%, 0.5';
+  ctx.fillStyle = 'hsla(' + colorCycle + ', 50%, 50%, 0.9';
  
   ctx.fill();
 }
@@ -231,8 +231,8 @@ function background(){
   if (colorCycle > 255){
     colorCycle = 255;
   }
-  //console.log(colorCycle);
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.65)'  ;
+  //console.log(colorCycle);        //0.65
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.072)'  ;
   
   //console.log(color);
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -331,10 +331,11 @@ function push(distance) {
   
 }
 function shrink() {
+  let shrinkFactor = ballon.size / 100; 
   if (ballon.size == orgSize) {
     return true;
   } else if (ballon.size > orgSize) {
-    ballon.size -= 0.22;
+    ballon.size -= 2 * shrinkFactor;
   } else {
     return true;
   }
